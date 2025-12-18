@@ -16,13 +16,12 @@ scopes = ['https://www.googleapis.com/auth/spreadsheets']
 creds = Credentials.from_service_account_file('credentials.json', scopes=scopes)
 client = gspread.authorize(creds)
 
-"""  WARNING, THIS WONT RUN UNLESS YOU CHAT THE API KEY FOR GOOGLE SHEETS IN THE "KEY" FILE  """
+"""  WARNING, THIS WONT RUN UNLESS YOU ADD YOUR CREDS FILE AND CHANGE THE URL KEY """
 
-with open("key", "r") as f:
+with open("google_sheet_url_key", "r") as f:
     key = f.read().strip()
-sheet_id = key
 
-workbook = client.open_by_key(sheet_id)
+workbook = client.open_by_key(key)
 sheet = workbook.sheet1
 
 example_prompt = (
@@ -31,6 +30,12 @@ example_prompt = (
     "Only respond with 'True' or 'False'. Text: {text}. "
 )
 
+target_keywords = [
+    "keyword_one",
+    "keyword_two",
+    "phrase to look for",
+    "another criteria",
+]
 
 def nextpage(next_page, driver):
     """Load the requested page and clear any CAPTCHA."""
@@ -70,12 +75,7 @@ def analyzetext(text: str, prompt_template: str, model: str) -> bool:
 
 
 # REPLACED: Specific keywords removed for generic placeholder list
-target_keywords = [
-    "keyword_one",
-    "keyword_two",
-    "phrase to look for",
-    "another criteria",
-]
+
 
 
 def findkeywordintext(text: str, keywords: list[str]) -> bool:
@@ -98,7 +98,6 @@ def findkeywordintext(text: str, keywords: list[str]) -> bool:
 
 def scraper(given_prompt,model, start_page: int = 1, last_page: int = LAST_PAGE):
     """Main scraping loop (resumable)."""
-
     prompt = given_prompt
 
     print("🚀 Starting scraper…")
